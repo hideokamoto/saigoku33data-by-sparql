@@ -12,20 +12,21 @@ Version: 1.0
 Author URI: http://wp-kyoto.net/
 */
 
-//Here is using PHP & jQuery
-
 add_action('admin_menu', 'sparql_hooks');
 add_action('save_post', 'save_sparql');
 add_action('wp_footer','insert_custom_js');
+add_shortcode('db-temple', 'db_temple_shortcode');
+
+function db_temple_shortcode(){
+    return '<ul class="temple">loading...</ul>';
+}
 
 function get_sparql_data(){
-$sparql = get_post_meta(get_the_ID(), '_sparql', true);
-
-$sparql = urlencode($sparql);
 
 $place = get_post_meta(get_the_ID(), '_sparql', true);
 if (!empty($place)) {
-    $place = get_post_meta(get_the_ID(), '_sparql', true);
+    $place1 = esc_html($place);
+    $place = $place1;
 } else {
     $place = ".*";
 }
@@ -58,9 +59,9 @@ function insert_custom_js() {
             echo "<script type='text/javascript'>
 jQuery(document).ready(function($){
         $.getJSON('" . get_sparql_data() . "',function(data) {
-        $('.ajax').html('');
+        $('.temple').html('');
             for(var i=0;i<36;i++){
-                $('.ajax').append(
+                $('.temple').append(
                     '<li><img src=" . "'+data.results.bindings[i].thumb.value+'" . "><h1>'+data.results.bindings[i].name.value+'</h1><dl><dt>住所</dt><dd>'+data.results.bindings[i].address.value+'</dd><dt>説明</dt><dd>'+data.results.bindings[i].cont.value+'</dd></dl></li>'
                     );
         }
