@@ -12,7 +12,6 @@ Version: 1.0
 Author URI: http://wp-kyoto.net/
 */
 
-//Here is using PHP & jQuery
 
 add_action('admin_menu', 'sparql_hooks');
 add_action('save_post', 'save_sparql');
