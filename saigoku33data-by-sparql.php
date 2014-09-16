@@ -12,10 +12,18 @@ Version: 1.0
 Author URI: http://wp-kyoto.net/
 */
 
+//Here is using PHP & jQuery
+
 add_action('admin_menu', 'sparql_hooks');
 add_action('save_post', 'save_sparql');
 add_action('wp_footer','insert_custom_js');
 add_shortcode('db-temple', 'db_temple_shortcode');
+add_action( 'wp_enqueue_scripts', 'theme_name_scripts' );
+
+
+function theme_name_scripts() {
+    wp_enqueue_style( 'saigoku33data', plugins_url( 'saigoku33data-style.css' , __FILE__ ) );
+}
 
 function db_temple_shortcode(){
     return '<ul class="temple">loading...</ul>';
@@ -25,8 +33,7 @@ function get_sparql_data(){
 
 $place = get_post_meta(get_the_ID(), '_sparql', true);
 if (!empty($place)) {
-    $place1 = esc_html($place);
-    $place = $place1;
+    $place = esc_html($place);
 } else {
     $place = ".*";
 }
@@ -62,7 +69,7 @@ jQuery(document).ready(function($){
         $('.temple').html('');
             for(var i=0;i<36;i++){
                 $('.temple').append(
-                    '<li><img src=" . "'+data.results.bindings[i].thumb.value+'" . "><h1>'+data.results.bindings[i].name.value+'</h1><dl><dt>住所</dt><dd>'+data.results.bindings[i].address.value+'</dd><dt>説明</dt><dd>'+data.results.bindings[i].cont.value+'</dd></dl></li>'
+                    '<li><figure><img src=" . "'+data.results.bindings[i].thumb.value+'" . "><h1>'+data.results.bindings[i].name.value+'</h1></figure><dl><dt>住所</dt><dd>'+data.results.bindings[i].address.value+'</dd><dt>説明</dt><dd>'+data.results.bindings[i].cont.value+'</dd></dl></li>'
                     );
         }
         })
