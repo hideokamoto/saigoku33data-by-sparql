@@ -29,7 +29,7 @@ function db_temple_shortcode($place){
     $merged_atts = shortcode_atts( $default_atts, $place);
     extract( $merged_atts);
 
-    $html  = '<ul class="temple">loading...</ul>';
+    $html  = '<div class="saigoku33data"><ul class="temple">loading...</ul>';
     $html .= "<script type='text/javascript'>
         jQuery(document).ready(function($){
         $.getJSON('" . get_sparql_data($text) . "',function(data) {
@@ -42,6 +42,7 @@ function db_temple_shortcode($place){
         })
 });
 </script>";
+    $html .= '<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="クリエイティブ・コモンズ・ライセンス" style="border-width:0" src="http://ja.dbpedia.org/statics/cc_by_sa_88x31.png"></a><br><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Dataset" property="dct:title" rel="dct:type">DBpedia Japanese</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://ja.dbpedia.org" property="cc:attributionName" rel="cc:attributionURL">DBpedia Community</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 表示 - 継承 3.0 非移植 License</a>.</p></div>';
     return $html;
 }
 
@@ -58,5 +59,18 @@ $sparql_url = "http://ja.dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fja.db
 
     return $sparql_url;
 }
+
+//実験
+function my_3rd_func( $atts, $content='') {
+    if (!$content) {
+        return;
+    }
+    extract(shortcode_atts(array(
+        'class' => 'default'
+        ), $atts) );
+
+    return '<p class="'. esc_attr($class). '">' . esc_html($content) . '</p>';
+}
+add_shortcode ( 'my-3rd', 'my_3rd_func');
 
 ?>
