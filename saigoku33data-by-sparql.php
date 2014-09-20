@@ -29,19 +29,20 @@ function db_temple_shortcode($place){
     $merged_atts = shortcode_atts( $default_atts, $place);
     extract( $merged_atts);
 
-    $html  = '<ul class="temple">loading...</ul>';
+    $html  = '<div class="saigoku33data"><ul class="temple">loading...</ul>';
     $html .= "<script type='text/javascript'>
         jQuery(document).ready(function($){
         $.getJSON('" . get_sparql_data($text) . "',function(data) {
         $('.temple').html('');
             for(var i=0;i<36;i++){
                 $('.temple').append(
-                    '<li><figure><img src=" . "'+data.results.bindings[i].thumb.value+'" . "><h1>'+data.results.bindings[i].name.value+'</h1></figure><dl><dt>住所</dt><dd>'+data.results.bindings[i].address.value+'</dd><dt>説明</dt><dd>'+data.results.bindings[i].cont.value+'</dd></dl></li>'
+                    '<li><h1>'+data.results.bindings[i].label.value+'</h1><dl><dt>住所</dt><dd>'+data.results.bindings[i].address.value+'</dd></dl></li>'
                     );
         }
         })
 });
 </script>";
+    $html .= '<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="クリエイティブ・コモンズ・ライセンス" style="border-width:0" src="http://ja.dbpedia.org/statics/cc_by_sa_88x31.png"></a><br><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Dataset" property="dct:title" rel="dct:type">DBpedia Japanese</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://ja.dbpedia.org" property="cc:attributionName" rel="cc:attributionURL">DBpedia Community</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons 表示 - 継承 3.0 非移植 License</a>.</p></div>';
     return $html;
 }
 
@@ -52,9 +53,9 @@ if (!empty($place)) {
 } else {
     $place = ".*";
 }
-$sparql_base_url ="PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>PREFIX dcterms:<http://purl.org/dc/terms/>select distinct * where {?link dcterms:subject <http://ja.dbpedia.org/resource/Category:西国三十三所>;rdfs:comment ?cont;dbpedia-owl:thumbnail ?thumb;dbpedia-owl:address ?address;rdfs:label ?name.FILTER (REGEX (?name, '{$place}'))}";
+$sparql_base_url ="PREFIX schema:<http://schema.org/>PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>PREFIX lodosaka:<http://lodosaka.hozo.jp/>SELECT DISTINCT ?label ?address ?ku WHERE{  ?uri lodosaka:category_1 ?cat.FILTER (regex(str(?cat), "公園") || regex(str(?cat), "観光"))  ?uri schema:name ?label;  schema:address ?address;  lodosaka:ku ?ku.FILTER (regex(str(?ku), "{$place}"))}";
 $sparql_base_url = urlencode($sparql_base_url);
-$sparql_url = "http://ja.dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fja.dbpedia.org&query={$sparql_base_url}&format=application%2Fsparql-results%2Bjson&timeout=0";
+$sparql_url = "http://db.lodosaka.jp/sparql?default-graph-uri=&query={$sparql_base_url}&format=application%2Fsparql-results%2Bjson";
 
     return $sparql_url;
 }
